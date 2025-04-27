@@ -5,3 +5,7 @@ Commit 1 : This is a new project I am working on which is supposed to be the spl
 BE: I created the logic for add the group name and saving it in the JSON file as a object with the id generating using nanoid, I tried to use MVC, and make the folder structure accordingly.
 
 /===================================================================================================================================/
+
+Commit 2 : In this commit I added the feature to add members in a group & save it in the local storage.
+
+/***********************************************************************************************************************************/
