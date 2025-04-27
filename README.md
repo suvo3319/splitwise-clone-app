@@ -9,3 +9,9 @@ BE: I created the logic for add the group name and saving it in the JSON file as
 Commit 2 : In this commit I added the feature to add members in a group & save it in the local storage.
 
 /***********************************************************************************************************************************/
+
+/***********************************************************************************************************************************/
+
+Commit: 3: In this commit I added the get routes to fetch the data, I am planning using callback to utilize also in the post request will work on that letter commit.
+
+/***********************************************************************************************************************************/
