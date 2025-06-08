@@ -1,9 +1,11 @@
 import express from "express";
+import cors from "cors";
 import hostRouter from "./routes/hostRoutes.js";
 import getRouter from "./routes/getRoutes.js";
 
 const app = express();
 
+app.use(cors())
 app.use(express.json()); // Middleware to parse JSON request bodies
 app.use(express.urlencoded()); // Middleware to parse URL-encoded request bodies
 app.use('/host', hostRouter);
