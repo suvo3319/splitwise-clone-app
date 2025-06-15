@@ -1,20 +1,43 @@
 import { useState } from "react";
 
 export default function InputTables({ members, onSubmitExpenses, onSimplify, transactions }) {
-    const [data, setData] = useState(Array.isArray(members) && members.map(member => ({...member, owed: 0, debt: 0, total: 0})));
+    console.log(`Members in InputTables component: ${members}`, members);
+    const [data, setData] = useState(() => {
+        if (Array.isArray(members)) {
+            return members.map(member => ({
+                ...member,
+                owed: member.owed || 0,
+                debt: member.debt || 0,
+                total: (member.owed || 0) - (member.debt || 0)
+            }));
+        }
+        return [];
+    });
+
     const handleChange = (id, field, value) => {
         setData(prevData => 
             prevData.map(member => 
-                member.id === id ? {...member, [field]: Number(value),total: (field === 'owed' || field === 'debt') ? Number(value) + member.total : member.total} : member
+                member.id === id 
+                    ? {
+                        ...member, 
+                        [field]: Number(value), 
+                        total: field === 'owed' 
+                            ? Number(value) - member.debt 
+                            : member.owed - Number(value)
+                    } 
+                    : member
             )
         );
-    }
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         data.forEach(d => {
             onSubmitExpenses(d);
-        })
+        });
     };
+
+    console.log(`Data in InputTables component: `, data);
     return (
         <div>
             <table className="w-full border table-auto">

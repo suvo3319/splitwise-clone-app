@@ -11,13 +11,15 @@ export default function GroupDetails() {
 
     useEffect(() => {
         fetchById(id).then(group => {
-            const memberId = group.members[0]?.id || '';
-            fetchMembersById(id, memberId)
+            const memberIds = group.members.map(member => member.id);
+            Promise.all(memberIds.map(memberId => fetchMembersById(id, memberId)))
                 .then(data => {
-                    setMembers(data);
+                    setMembers(data.flat());
                 })
         })
-    },[id]);
+    }, [id]);
+
+    console.log(`Members fetched successfully `, members);
 
     const handleSubmitExpenses = async (member) => {
         await addExpense(id, member.id, {owed: member.owed, debt: member.debt});

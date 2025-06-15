@@ -15,6 +15,7 @@ export default function Home() {
                 console.error("Error fetching groups:", error);
             });
     }, []);
+    console.log(`Groups fetched successfully `,groups);
 
     return (
         <div>
