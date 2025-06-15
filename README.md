@@ -26,4 +26,10 @@ Commit 4: In this commit I completed the backend logic for the application I tri
 
 Commit 5: In this commit I push all the frontend changes required & it able to call the API from frontend successfully but due to some datatype the displaying is not working properly will work on that later & will try to do the firts draft of the complete working applicatin.
 
-/************************************************************************************************************************************/s
+/************************************************************************************************************************************/
+
+/===================================================================================================================================/
+
+commit 6: In this commmit I do some frontend changes to view the table but still transactions column isn't working will work in the next commit.
+
+/************************************************************************************************************************************/
