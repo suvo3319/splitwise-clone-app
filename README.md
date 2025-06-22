@@ -33,3 +33,9 @@ Commit 5: In this commit I push all the frontend changes required & it able to c
 commit 6: In this commmit I do some frontend changes to view the table but still transactions column isn't working will work in the next commit.
 
 /************************************************************************************************************************************/
+
+/===================================================================================================================================/
+
+commit 7: In this commit I did some frontend changes to view the simplified transactions table in the application but it's far away from perfect version as add expense button isn't working and the simlified result is also not ass good as it should be need some more work on it & also need to do some backend loogics for simplificationsand frontend also need some changes logic wise & display wise also.
+
+/************************************************************************************************************************************/
