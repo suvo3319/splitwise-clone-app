@@ -1,105 +1,123 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function InputTables({ members, onSubmitExpenses, onSimplify, transactions }) {
-    console.log(`Members in InputTables component: ${members}`, members);
-    const [data, setData] = useState(() => {
-        if (Array.isArray(members)) {
-            return members.map(member => ({
+    //console.log(`Members in InputTables component: ${members}`, members);
+    //console.log(`Transactions in InputTables component: ${transactions}`, transactions);
+    const [data, setData] = useState([]);
+    const [simplified, setSimplified] = useState([]);
+
+    useEffect(() => {
+        const initializeData = async () => {
+            await new Promise(resolve => setTimeout(resolve, 0)); // Simulate async behavior
+            setData([...members.map(member => ({
                 ...member,
                 owed: member.owed || 0,
-                debt: member.debt || 0,
-                total: (member.owed || 0) - (member.debt || 0)
-            }));
-        }
-        return [];
-    });
+                debt: member.debt || 0
+            }))]);
+            setSimplified([...transactions.map(transaction => ({
+                from: transaction.from,
+                to: transaction.to,
+                amount: transaction.amount
+            }))] || []);
+        };
+        initializeData();
+    }, [members, transactions]);
 
-    const handleChange = (id, field, value) => {
-        setData(prevData => 
-            prevData.map(member => 
-                member.id === id 
-                    ? {
-                        ...member, 
-                        [field]: Number(value), 
-                        total: field === 'owed' 
-                            ? Number(value) - member.debt 
-                            : member.owed - Number(value)
-                    } 
-                    : member
-            )
-        );
+    const handleChange = (index, field, value) => {
+        const newData = [...data];
+        newData[index][field] = value;
+        setData(newData);
     };
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        data.forEach(d => {
-            onSubmitExpenses(d);
+        data.forEach((member) => {
+            if (member.owed || member.debt) {
+                onSubmitExpenses(member);
+            }
         });
-    };
-
-    console.log(`Data in InputTables component: `, data);
+        setData(members);
+    }
+    const handleSimplify = () => {
+        onSimplify();
+        setSimplified(transactions);
+    }
+    //console.log(`data in InputTables component: ${data}`, data);
+    //console.log(`Transactions in InputTables: ${transactions}`, transactions);
     return (
-        <div>
-            <table className="w-full border table-auto">
-                <thead className="bg-gray-200">
-                    <tr>
-                        <th className="border px-4 py-2">Name</th>
-                        <th className="border px-4 py-2">Owed</th>
-                        <th className="border px-4 py-2">Debt</th>
-                        <th className="border px-4 py-2">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {Array.isArray(data) && data.map(member => (
-                        <tr key={member.id} className="text-center">
-                            <td className="border px-4 py-2">{member.name}</td>
-                            <td className="border px-4 py-2">
-                                <input 
-                                    type="number" 
-                                    value={member.owed} 
-                                    onChange={(e) => handleChange(member.id, 'owed', e.target.value)} 
-                                    className="w-20 border"
-                                />
-                            </td>
-                            <td className="border px-4 py-2">
-                                <input 
-                                    type="number" 
-                                    value={member.debt} 
-                                    onChange={(e) => handleChange(member.id, 'debt', e.target.value)} 
-                                    className="w-20 border"
-                                />
-                            </td>
-                            <td className="border px-4 py-2">{member.total}</td>
+        <div className="max-w-4xl mx-auto">
+            <h1 className="text-2xl font-bold mb-4">Group Expenses</h1>
+            <form onSubmit={handleSubmit} className="mb-4">
+                <table className="min-w-full bg-white">
+                    <thead>
+                        <tr>
+                            <th className="py-2 px-4 border-b">Member</th>
+                            <th className="py-2 px-4 border-b">Owed</th>
+                            <th className="py-2 px-4 border-b">Debt</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-            <div className="flex gap-3 mt-4">
-                <button 
-                    onClick={handleSubmit} 
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-                >
-                    Submit Expenses
-                </button>
-                <button 
-                    onClick={onSimplify} 
-                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
-                >
-                    Simplify Expenses
-                </button>
-                {transactions?.length > 0 && (
-                    <div className="mt-5">
-                        <h2 className="text-lg font-semibold">Transactions</h2>
-                        <ul className="list-disc ml-6">
-                            {transactions.map((transaction, index) => (
-                                <li key={index} className="text-gray-700">
-                                    {transaction.from} owes {transaction.to} ₹{transaction.amount}
-                                </li>
+                    </thead>
+                    <tbody>
+                        {data.map((member, index) => (
+                            <tr key={member.id}>
+                                <td className="py-2 px-4 border-b">{member.name}</td>
+                                <td className="py-2 px-4 border-b">
+                                    <input
+                                        type="number"
+                                        value={member.owed || ''}
+                                        onChange={(e) => handleChange(index, 'owed', e.target.value)}
+                                        className="border rounded px-2 py-1 w-full"
+                                    />
+                                </td>
+                                <td className="py-2 px-4 border-b">
+                                    <input
+                                        type="number"
+                                        value={member.debt || ''}
+                                        onChange={(e) => handleChange(index, 'debt', e.target.value)}
+                                        className="border rounded px-2 py-1 w-full"
+                                    />
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                <div className="mt-4">
+                    <button
+                        type="submit"
+                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                    >
+                        Submit Expenses
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleSimplify}
+                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 ml-2"
+                    >
+                        Simplify Expenses
+                    </button>
+                </div>
+            </form>
+            {simplified.length > 0 && (
+                <div className="mt-6">
+                    <h2 className="text-xl font-bold mb-4">Simplified Transactions</h2>
+                    <table className="min-w-full bg-white">
+                        <thead>
+                            <tr>
+                                <th className="py-2 px-4 border-b">From</th>
+                                <th className="py-2 px-4 border-b">To</th>
+                                <th className="py-2 px-4 border-b">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {simplified.map((transaction, index) => (
+                                <tr key={index}>
+                                    <td className="py-2 px-4 border-b">{transaction.from}</td>
+                                    <td className="py-2 px-4 border-b">{transaction.to}</td>
+                                    <td className="py-2 px-4 border-b">{transaction.amount}</td>
+                                </tr>
                             ))}
-                        </ul>
-                    </div>
-                )}
-            </div>
+                        </tbody>
+                    </table>
+                </div>
+            )}
         </div>
-    )
+    );
 }
